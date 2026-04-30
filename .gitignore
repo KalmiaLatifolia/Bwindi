@@ -1,8 +1,10 @@
 
+# R project files
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 .DS_Store
 
+# Data folders
 rasters/
