@@ -6,6 +6,8 @@
 # Rule of thumb, species classifiers with ~100 training recordings tend to be alright
 # so, how many of these 690 classes have at least 100 xenocanto examples?
 
+# https://xeno-canto.org/explore/api
+
 library(httr)
 library(jsonlite)
 library(dplyr)
