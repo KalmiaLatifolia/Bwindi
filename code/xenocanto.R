@@ -10,6 +10,7 @@ library(httr)
 library(jsonlite)
 library(dplyr)
 library(readr)
+library(purrr)
 
 # set wd -----------------------------------------------------------------------
 setwd("/Users/lauraberman/Library/CloudStorage/OneDrive-NationalUniversityofSingapore/Documents/Wisconsin/Townsend Lab/Bwindi")
@@ -17,17 +18,26 @@ setwd("/Users/lauraberman/Library/CloudStorage/OneDrive-NationalUniversityofSing
 # read species list ------------------------------------------------------------
 sp <- read_csv("chirpity_species_list.csv", col_names = c("scientific_name", "common_name"))
 
+# set xenocanto api key --------------------------------------------------------
+#Sys.setenv(XC_KEY = "") secret
+key <- Sys.getenv("XC_KEY")
+
 # function to query xenocanto --------------------------------------------------
-get_xc_count <- function(species){
-  q <- paste0('species:"', species, '"')
-  url <- paste0("https://xeno-canto.org/api/2/recordings?query=", URLencode(q))
-  res <- GET(url)
+get_xc_count <- function(species, key){
+  q <- paste0('sp:"', species, '"')
+  res <- GET(url = "https://xeno-canto.org/api/3/recordings",
+             query = list(query = q, key = key))
+  stop_for_status(res)
   dat <- fromJSON(content(res, "text", encoding="UTF-8"))
-  return(as.numeric(dat$numRecordings))
+  as.numeric(dat$numRecordings)
 }
 
-# apply to all species (slow) --------------------------------------------------
-sp$xc_recordings <- sapply(sp$scientific_name, get_xc_count)
+# get the recordings count for each species ------------------------------------
+sp <- sp %>%
+  mutate(xc_recordings = map_dbl(scientific_name, ~{
+    Sys.sleep(0.5)
+    get_xc_count(.x, key)
+  }))
 
 # save result ------------------------------------------------------------------
 write_csv(sp, "species_with_xc_counts.csv")
