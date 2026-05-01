@@ -3,6 +3,8 @@
 # Fabian made some excellent maps of Forest structural diversity from GEDI data
 # lets see how it looks over Bwindi
 
+# Data source: https://www.earthdata.nasa.gov/data/catalog/ornl-cloud-forest-diversity-caf-westernus-2481-1#documents-and-resources 
+
 library(terra)
 library(dplyr)
 library(mapview)
